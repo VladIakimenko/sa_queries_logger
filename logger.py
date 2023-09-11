@@ -1,4 +1,6 @@
-import datetime
+
+# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< INJECTION BEGINS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+from datetime import datetime
 from sqlalchemy import event
 
 
@@ -11,19 +13,19 @@ class QueryLogger:
 
     def log_sql(self, conn, cursor, statement, *args):
         with open(self.log_file_name, 'a') as log_file:
-            log_file.write(f"\n\nTime: {datetime.datetime.now()}")
+            log_file.write(f"\n\nTime: {datetime.now()}")
             log_file.write("\nSQL: " + statement)
             self.query_count += 1
 
     def __enter__(self):
-        self.start_time = datetime.datetime.now()
+        self.start_time = datetime.now()
         with open(self.log_file_name, 'a') as log_file:
             log_file.write(f"\n\n\n\tDatabase URL: {self.engine.url}\n")
             log_file.write(f"\tTime entered: {self.start_time}\n")
         event.listen(self.engine, "before_cursor_execute", self.log_sql)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        end_time = datetime.datetime.now()
+        end_time = datetime.now()
         elapsed_time = (end_time - self.start_time).total_seconds()
 
         with open(self.log_file_name, 'a') as log_file:
@@ -33,6 +35,7 @@ class QueryLogger:
 
         event.remove(self.engine, "before_cursor_execute", self.log_sql)
 
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> INJECTION ENDS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 
 # assuming current sa session is stored as "session"
